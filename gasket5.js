@@ -9,12 +9,12 @@ var gl;
 
 // numCirclePoints er fjöldi punkta á hringnum
 // Heildarfjöldi punkta er tveimur meiri (miðpunktur + fyrsti punktur kemur tvisvar)
-var numCirclePoints = 20;       
+var numCirclePoints = 100;       
 
 var radius = 0.4;
 var center = vec2(0, 0);
 
-var vBuffer;
+
 var points = [];
 
 window.onload = function init() {
@@ -37,24 +37,23 @@ window.onload = function init() {
     points.push( center );
     createCirclePoints( center, radius, numCirclePoints );
 
-    vBuffer = gl.createBuffer();
+    var vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
     
     var vPosition = gl.getAttribLocation(program, "vPosition");
     gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
-	
 	document.getElementById("slider").onchange = function(event) {
         numCirclePoints = parseInt(event.target.value);
         render();
-    };   
+    };
     render();
 }
 
 
 // Create the points of the circle
-function createCirclePoints( cent, rad, k )
+function createCirclePoints(cent, rad, k)
 {
     var dAngle = 2*Math.PI/k;
     for( i=k; i>=0; i-- ) {
@@ -65,10 +64,10 @@ function createCirclePoints( cent, rad, k )
 }
 
 function render() {
-	points = [];
-    // Create the circle
-    points.push( center );
-    createCirclePoints( center, radius, numCirclePoints );
+    points = [];
+	points.push(center);
+	createCirclePoints(center, radius, numCirclePoints);
+	gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(points));
     gl.clear( gl.COLOR_BUFFER_BIT );
     
     // Draw circle using Triangle Fan
